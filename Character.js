@@ -1,4 +1,4 @@
-define(["require", "exports", "./xyTuple"], function (require, exports, xyTuple_1) {
+define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require, exports, xyTuple_1, DrawingHelper_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Character = /** @class */ (function () {
@@ -7,11 +7,9 @@ define(["require", "exports", "./xyTuple"], function (require, exports, xyTuple_
             this.position = new xyTuple_1.Point();
         }
         Character.prototype.draw = function (context) {
-            // const radius = Math.sin(this.frame) * 20 + 50;
-            var radius = 50;
+            var radius = 25;
             this.frame += Math.PI / 60;
-            // context.ellipse(this.x, this.y, radius, radius, 0, 0, Math.PI);
-            context.fillRect(this.position.x - radius / 2, this.position.y - radius / 2, radius, radius);
+            DrawingHelper_1.circle(context, this.position.x, this.position.y, radius, 'black');
         };
         return Character;
     }());

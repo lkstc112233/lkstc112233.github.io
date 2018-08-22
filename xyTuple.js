@@ -43,6 +43,17 @@ define(["require", "exports"], function (require, exports) {
         Point.prototype.zero = function () {
             this.x = this.y = 0;
         };
+        Object.defineProperty(Point.prototype, "length", {
+            get: function () {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            },
+            set: function (length) {
+                this.normalize();
+                this.mul(length);
+            },
+            enumerable: true,
+            configurable: true
+        });
         Point.prototype.normalize = function () {
             var ratio = Math.sqrt(this.x * this.x + this.y * this.y);
             if (ratio == 0) {
