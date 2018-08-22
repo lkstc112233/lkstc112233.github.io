@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <style>
+            html, body {
+                margin: 0;
+                height: 100%;
+                overflow: hidden;
+            }
+        </style>
+        <script>
+            function resizeCanvas() {
+                canvas = document.getElementById("canvas");
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        </script>
+        <script data-main="./main.js" src="./require.js"></script>
+    </head>
+    <body onresize="resizeCanvas();">
+        <canvas id="canvas"></canvas>
+        <script>
+            resizeCanvas();
+        </script>
+    </body>
+</html>
