@@ -1,6 +1,13 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var Direction;
+    (function (Direction) {
+        Direction[Direction["DOWN"] = 0] = "DOWN";
+        Direction[Direction["UP"] = 1] = "UP";
+        Direction[Direction["LEFT"] = 2] = "LEFT";
+        Direction[Direction["RIGHT"] = 3] = "RIGHT";
+    })(Direction = exports.Direction || (exports.Direction = {}));
     var Point = /** @class */ (function () {
         function Point(x, y) {
             if (x === void 0) { x = 0; }
@@ -50,6 +57,26 @@ define(["require", "exports"], function (require, exports) {
             set: function (length) {
                 this.normalize();
                 this.mul(length);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Point.prototype, "direction", {
+            get: function () {
+                var THRESHOLD = 0.001;
+                if (this.length < THRESHOLD) {
+                    return Direction.DOWN;
+                }
+                if (this.y > Math.abs(this.x)) {
+                    return Direction.DOWN;
+                }
+                if (this.x > Math.abs(this.y)) {
+                    return Direction.RIGHT;
+                }
+                if (this.y < this.x) {
+                    return Direction.UP;
+                }
+                return Direction.LEFT;
             },
             enumerable: true,
             configurable: true
