@@ -41,6 +41,7 @@ define(["require", "exports", "./Character", "./xyTuple", "./Controller", "./Ima
         controller.touchUpdate(new xyTuple_1.Point(x, y));
     });
     canvas.addEventListener("touchstart", function (ev) {
+        ev.preventDefault();
         if (ev.touches.length == 1) {
             var rect = canvas.getBoundingClientRect();
             var x = ev.touches[0].clientX - rect.left;
