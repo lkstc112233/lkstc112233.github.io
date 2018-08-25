@@ -9,17 +9,17 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             this.radiusLarge = 70;
         }
         Controller.prototype.touchBegin = function (pnt) {
-            this.touchStart = Object.create(pnt);
+            this.touchStart = pnt.clone();
             this.touching = this.touchStart;
             this.isTouching = true;
         };
         Controller.prototype.touchUpdate = function (pnt) {
-            this.touching = Object.create(pnt);
-            var calc = Object.create(this.touching);
+            this.touching = pnt.clone();
+            var calc = this.touching.clone();
             calc.minus(this.touchStart);
             var ratio = calc.length;
             if (calc.length > this.radiusLarge) {
-                this.touching = Object.create(this.touchStart);
+                this.touching = this.touchStart.clone();
                 calc.length = this.radiusLarge;
                 this.touching.plus(calc);
             }
@@ -31,7 +31,7 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             if (!this.isTouching) {
                 return new xyTuple_1.Point();
             }
-            var result = Object.create(this.touching);
+            var result = this.touching.clone();
             result.minus(this.touchStart);
             result.mul(1 / 70);
             return result;

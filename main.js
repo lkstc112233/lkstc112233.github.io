@@ -1,11 +1,12 @@
-define(["require", "exports", "./Character", "./xyTuple", "./Controller", "./Images"], function (require, exports, Character_1, xyTuple_1, Controller_1, Images_1) {
+define(["require", "exports", "./Character", "./xyTuple", "./Controller", "./Images", "./Scene"], function (require, exports, Character_1, xyTuple_1, Controller_1, Images_1, Scene_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext('2d');
     var char = new Character_1.Character();
     var controller = new Controller_1.Controller();
-    var vel = new xyTuple_1.Point();
+    var scene = new Scene_1.Scene();
+    scene.add(char);
     function loadLoop() {
         if (Images_1.loadedImageSum != Images_1.totalImageSum) {
             requestAnimationFrame(loadLoop);
@@ -30,10 +31,10 @@ define(["require", "exports", "./Character", "./xyTuple", "./Controller", "./Ima
         var acc = controller.getControllerValue();
         acc.mul(0.3);
         char.velocity.plus(acc);
-        char.draw(context);
+        scene.draw(context);
+        scene.update();
         controller.draw(context);
     }
-    var defaultAcc = 0.1;
     canvas.addEventListener("touchmove", function (ev) {
         var rect = canvas.getBoundingClientRect();
         var x = ev.touches[0].clientX - rect.left;

@@ -15,6 +15,12 @@ define(["require", "exports"], function (require, exports) {
             this.m_x = x;
             this.m_y = y;
         }
+        Point.prototype.clone = function () {
+            var point = new Point();
+            point.x = this.x;
+            point.y = this.y;
+            return point;
+        };
         Object.defineProperty(Point.prototype, "x", {
             get: function () {
                 return this.m_x;
@@ -63,7 +69,7 @@ define(["require", "exports"], function (require, exports) {
         });
         Object.defineProperty(Point.prototype, "direction", {
             get: function () {
-                var THRESHOLD = 0.001;
+                var THRESHOLD = 0.05;
                 if (this.length < THRESHOLD) {
                     return Direction.DOWN;
                 }
