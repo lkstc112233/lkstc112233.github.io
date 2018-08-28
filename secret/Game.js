@@ -10,31 +10,29 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
     })(Status = exports.Status || (exports.Status = {}));
     var Builder = /** @class */ (function () {
         function Builder() {
-            this.boundryLeft = 0;
-            this.boundryTop = 0;
-            this.boundryRight = 100;
-            this.boundryBottom = 100;
+            this.left = 0;
+            this.top = 0;
+            this.width = 100;
+            this.height = 100;
             this.playerInitial = new xyTuple_1.Point();
             this.keyInitial = new xyTuple_1.Point();
         }
         Builder.prototype.build = function () {
-            var result = new Game(this.boundryLeft, this.boundryTop, this.boundryRight, this.boundryBottom, this.playerInitial, this.keyInitial);
+            var result = new Game(this.width, this.height, this.playerInitial, this.keyInitial, new xyTuple_1.Point(this.left, this.top));
             return result;
         };
         return Builder;
     }());
     exports.Builder = Builder;
     var Boundry = /** @class */ (function () {
-        function Boundry(left, top, right, bottom) {
-            this.left = left;
-            this.top = top;
-            this.right = right;
-            this.bottom = bottom;
+        function Boundry(width, height) {
+            this.width = width;
+            this.height = height;
             this.decay = false;
         }
         Object.defineProperty(Boundry.prototype, "z", {
             get: function () {
-                return this.top;
+                return 0;
             },
             enumerable: true,
             configurable: true
@@ -44,20 +42,19 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             context.beginPath();
             context.lineWidth = 5;
             context.strokeStyle = 'black';
-            context.rect(this.left, this.top, this.right - this.left, this.bottom - this.top);
+            context.rect(0, 0, this.width, this.height);
             context.stroke();
             context.restore();
         };
         return Boundry;
     }());
     var Game = /** @class */ (function () {
-        function Game(boundryLeft, boundryTop, boundryRight, boundryBottom, playerInitial, keyInitial) {
-            this.boundryLeft = boundryLeft;
-            this.boundryTop = boundryTop;
-            this.boundryRight = boundryRight;
-            this.boundryBottom = boundryBottom;
+        function Game(width, height, playerInitial, keyInitial, leftTopPoint) {
+            this.width = width;
+            this.height = height;
             this.playerInitial = playerInitial;
             this.keyInitial = keyInitial;
+            this.leftTopPoint = leftTopPoint;
             this.m_scene = new Scene_1.Scene();
             this.player = new Character_1.Character();
             this.key = new Key_1.Key();
@@ -67,7 +64,7 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             this.key.position = keyInitial.clone();
             this.scene.add(this.player);
             this.scene.add(this.key);
-            this.scene.add(new Boundry(this.boundryLeft, this.boundryTop, this.boundryRight, this.boundryBottom));
+            this.scene.add(new Boundry(this.width, this.height));
         }
         Object.defineProperty(Game.prototype, "scene", {
             get: function () {
@@ -86,14 +83,14 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
         Object.defineProperty(Game.prototype, "accelerate", {
             set: function (accelerate) {
                 this.m_accelerate = accelerate.clone();
-                this.m_accelerate.mul(0.3);
+                this.m_accelerate.mul(0.2);
             },
             enumerable: true,
             configurable: true
         });
         Object.defineProperty(Game.prototype, "playerKeyDistance", {
             get: function () {
-                var dx = this.key.position.x - this.player.position.x - 20;
+                var dx = this.key.position.x - this.player.position.x;
                 var dy = this.key.position.y - this.player.position.y - 20;
                 return Math.sqrt(dx * dx + dy * dy);
             },
@@ -110,21 +107,21 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             this.player.velocity.plus(this.m_accelerate);
             this.player.update();
             // Boundry check
-            if (this.player.position.x < this.boundryLeft) {
+            if (this.player.position.x < 20) {
                 this.player.velocity.x = 0;
-                this.player.position.x = this.boundryLeft;
+                this.player.position.x = 20;
             }
-            if (this.player.position.y < this.boundryTop - 20) {
+            if (this.player.position.y < 0) {
                 this.player.velocity.y = 0;
-                this.player.position.y = this.boundryTop - 20;
+                this.player.position.y = 0;
             }
-            if (this.player.position.x > this.boundryRight - 40) {
+            if (this.player.position.x > this.width - 20) {
                 this.player.velocity.x = 0;
-                this.player.position.x = this.boundryRight - 40;
+                this.player.position.x = this.width - 20;
             }
-            if (this.player.position.y > this.boundryBottom - 40) {
+            if (this.player.position.y > this.height - 20) {
                 this.player.velocity.y = 0;
-                this.player.position.y = this.boundryBottom - 40;
+                this.player.position.y = this.height - 20;
             }
             if (this.playerKeyDistance < 20) {
                 this.key.taken();
@@ -133,9 +130,11 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             this.scene.update();
         };
         Game.prototype.draw = function (context) {
+            context.save();
+            context.translate(this.leftTopPoint.x, this.leftTopPoint.y);
             this.scene.draw(context);
+            context.restore();
         };
         return Game;
     }());
-    exports.Game = Game;
 });

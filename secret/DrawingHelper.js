@@ -9,12 +9,18 @@ define(["require", "exports", "./Images"], function (require, exports, Images_1)
     }
     exports.circle = circle;
     function drawCharacterImage(context, image, row, column, x, y, size) {
-        context.drawImage(Images_1.ImagesLoaded[image], row * 16, column * 16, 16, 16, x, y, size, size);
+        context.drawImage(Images_1.ImagesLoaded[image], row * 16, column * 16, 16, 16, x - size / 2, y - size / 2, size, size);
     }
     exports.drawCharacterImage = drawCharacterImage;
     function drawKeyImage(context, x, y, size, flip) {
         if (flip === void 0) { flip = false; }
-        context.drawImage(Images_1.ImagesLoaded['KEY'], x - size / 2, y - size / 2, flip ? -size : size, size);
+        context.save();
+        if (flip) {
+            context.scale(-1, 1);
+            x = -x;
+        }
+        context.drawImage(Images_1.ImagesLoaded['KEY'], x - size / 2, y - size / 2, size, size);
+        context.restore();
     }
     exports.drawKeyImage = drawKeyImage;
 });

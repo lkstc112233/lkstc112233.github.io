@@ -3,7 +3,7 @@ define(["require", "exports", "./xyTuple", "./Controller", "./Images", "./Levels
     Object.defineProperty(exports, "__esModule", { value: true });
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext('2d');
-    var game = Levels_1.Level1.build();
+    var game = Levels_1.LevelB1.build();
     game.begin();
     var controller = new Controller_1.Controller();
     function loadLoop() {
