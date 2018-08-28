@@ -94,11 +94,18 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Character.prototype, "holding", {
+            get: function () {
+                return this.m_taken;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Character.prototype.generate = function () {
             if (this.velocity.length > 6) {
                 if (this.afterImageCooldown <= 0) {
                     this.afterImageCooldown = 5;
-                    return [new CharacterAfterImage(this.position.clone(), this.frame, this.headOffset, this.velocity.direction, this.m_taken)];
+                    return [new CharacterAfterImage(this.position.clone(), this.frame, this.headOffset, this.velocity.direction, this.holding)];
                 }
             }
             this.afterImageCooldown -= 1;
@@ -107,16 +114,13 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
         Character.prototype.taken = function () {
             this.m_taken = true;
         };
+        Character.prototype.untaken = function () {
+            this.m_taken = false;
+        };
         Character.prototype.update = function () {
             // Update status
             this.velocity.mul(0.97);
             this.position.plus(this.velocity);
-        };
-        Character.prototype.drawCharacter = function (context) {
-            var WALKING_STEPS = [0, 1, 0, 2];
-            var bodyType = this.m_taken ? 'BODY_HOLDING' : 'BODY';
-            DrawingHelper_1.drawCharacterImage(context, bodyType, WALKING_STEPS[Math.floor(this.frame / CHARACTER_WALKING_CONSTANT)], this.velocity.direction, this.position.x, this.position.y, CHARACTER_SIZE);
-            DrawingHelper_1.drawCharacterImage(context, 'HEAD', 0, this.velocity.direction, this.position.x, this.position.y + this.headOffset, CHARACTER_SIZE);
         };
         Character.prototype.draw = function (context) {
             // Draw spirit
@@ -126,7 +130,7 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             }
             // Update headOffset
             this.headOffset = (this.velocity.length * 0.2 + 1) * (Math.sin(this.headSpin += Math.PI / 60) + 1);
-            drawCharacter(context, this.position.x, this.position.y, this.headOffset, WALKING_STEPS[Math.floor(this.frame / CHARACTER_WALKING_CONSTANT)], this.m_taken, this.velocity.direction);
+            drawCharacter(context, this.position.x, this.position.y, this.headOffset, WALKING_STEPS[Math.floor(this.frame / CHARACTER_WALKING_CONSTANT)], this.holding, this.velocity.direction);
         };
         return Character;
     }());

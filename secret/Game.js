@@ -1,4 +1,4 @@
-define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], function (require, exports, Scene_1, Character_1, Key_1, xyTuple_1) {
+define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple", "./Chest"], function (require, exports, Scene_1, Character_1, Key_1, xyTuple_1, Chest_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Status;
@@ -16,9 +16,10 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             this.height = 100;
             this.playerInitial = new xyTuple_1.Point();
             this.keyInitial = new xyTuple_1.Point();
+            this.chestInitial = new xyTuple_1.Point();
         }
         Builder.prototype.build = function () {
-            var result = new Game(this.width, this.height, this.playerInitial, this.keyInitial, new xyTuple_1.Point(this.left, this.top));
+            var result = new Game(this.width, this.height, this.playerInitial, this.keyInitial, this.chestInitial, new xyTuple_1.Point(this.left, this.top));
             return result;
         };
         return Builder;
@@ -49,21 +50,25 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
         return Boundry;
     }());
     var Game = /** @class */ (function () {
-        function Game(width, height, playerInitial, keyInitial, leftTopPoint) {
+        function Game(width, height, playerInitial, keyInitial, chestInitial, leftTopPoint) {
             this.width = width;
             this.height = height;
             this.playerInitial = playerInitial;
             this.keyInitial = keyInitial;
+            this.chestInitial = chestInitial;
             this.leftTopPoint = leftTopPoint;
             this.m_scene = new Scene_1.Scene();
             this.player = new Character_1.Character();
             this.key = new Key_1.Key();
+            this.chest = new Chest_1.Chest();
             this.m_status = Status.IDLE;
             this.m_accelerate = new xyTuple_1.Point();
             this.player.position = playerInitial.clone();
             this.key.position = keyInitial.clone();
+            this.chest.position = chestInitial.clone();
             this.scene.add(this.player);
             this.scene.add(this.key);
+            this.scene.add(this.chest);
             this.scene.add(new Boundry(this.width, this.height));
         }
         Object.defineProperty(Game.prototype, "scene", {
@@ -90,8 +95,20 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
         });
         Object.defineProperty(Game.prototype, "playerKeyDistance", {
             get: function () {
+                if (this.key.gone) {
+                    return Infinity;
+                }
                 var dx = this.key.position.x - this.player.position.x;
                 var dy = this.key.position.y - this.player.position.y - 20;
+                return Math.sqrt(dx * dx + dy * dy);
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Game.prototype, "playerChestDistance", {
+            get: function () {
+                var dx = this.chest.position.x - this.player.position.x;
+                var dy = this.chest.position.y - this.player.position.y;
                 return Math.sqrt(dx * dx + dy * dy);
             },
             enumerable: true,
@@ -100,8 +117,12 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
         Game.prototype.begin = function () {
             this.m_status = Status.PLAYING;
         };
+        Game.prototype.win = function () {
+            this.m_status = Status.WIN;
+        };
         Game.prototype.update = function () {
             if (this.status != Status.PLAYING) {
+                this.scene.update();
                 return;
             }
             this.player.velocity.plus(this.m_accelerate);
@@ -126,6 +147,12 @@ define(["require", "exports", "./Scene", "./Character", "./Key", "./xyTuple"], f
             if (this.playerKeyDistance < 20) {
                 this.key.taken();
                 this.player.taken();
+            }
+            if (this.playerChestDistance < 20 && this.player.holding) {
+                this.chest.open();
+                this.player.untaken();
+                this.player.velocity.zero();
+                this.win();
             }
             this.scene.update();
         };

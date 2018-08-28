@@ -7,12 +7,14 @@ define(["require", "exports"], function (require, exports) {
         Images["BODY_HOLDING"] = "res/body-holding.png";
         Images["HEAD"] = "res/head.png";
         Images["KEY"] = "res/goldenkey.png";
+        Images["CHEST"] = "res/treasure-chest.png";
     })(Images = exports.Images || (exports.Images = {}));
     exports.ImagesLoaded = {
         BODY: new Image(),
         BODY_HOLDING: new Image(),
         HEAD: new Image(),
         KEY: new Image(),
+        CHEST: new Image(),
     };
     exports.loadedImageSum = 0;
     exports.totalImageSum = Object.keys(Images).length;

@@ -23,4 +23,14 @@ define(["require", "exports", "./Images"], function (require, exports, Images_1)
         context.restore();
     }
     exports.drawKeyImage = drawKeyImage;
+    function drawChestImage(context, process, x, y, size) {
+        if (process > 6) {
+            process = 6;
+        }
+        var column = Math.floor(process / 4);
+        var row = process % 4;
+        console.log(process, row, column);
+        context.drawImage(Images_1.ImagesLoaded['CHEST'], row * 35, column * 35, 35, 35, x - size / 2, y - size / 2, size, size);
+    }
+    exports.drawChestImage = drawChestImage;
 });

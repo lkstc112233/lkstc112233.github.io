@@ -8,4 +8,5 @@ define(["require", "exports", "./Game", "./xyTuple"], function (require, exports
     exports.LevelB1.height = 550;
     exports.LevelB1.keyInitial = new xyTuple_1.Point(250, 200);
     exports.LevelB1.playerInitial = new xyTuple_1.Point(100, 50);
+    exports.LevelB1.chestInitial = new xyTuple_1.Point(400, 350);
 });

@@ -21,6 +21,13 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Key.prototype, "gone", {
+            get: function () {
+                return this.keyTaken;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Key.prototype.taken = function () {
             this.keyTaken = true;
         };
