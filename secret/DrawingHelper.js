@@ -9,7 +9,7 @@ define(["require", "exports", "./Images"], function (require, exports, Images_1)
     }
     exports.circle = circle;
     function drawCharacterImage(context, image, row, column, x, y, size) {
-        context.drawImage(Images_1.ImagesLoaded[image], row * 16, column * 16, 16, 16, x - size / 2, y - size / 2, size, size);
+        context.drawImage(Images_1.getLoadedImage(image), row * 16, column * 16, 16, 16, x - size / 2, y - size / 2, size, size);
     }
     exports.drawCharacterImage = drawCharacterImage;
     function drawKeyImage(context, x, y, size, flip) {
@@ -19,7 +19,7 @@ define(["require", "exports", "./Images"], function (require, exports, Images_1)
             context.scale(-1, 1);
             x = -x;
         }
-        context.drawImage(Images_1.ImagesLoaded['KEY'], x - size / 2, y - size / 2, size, size);
+        context.drawImage(Images_1.getLoadedImage('KEY'), x - size / 2, y - size / 2, size, size);
         context.restore();
     }
     exports.drawKeyImage = drawKeyImage;
@@ -29,8 +29,7 @@ define(["require", "exports", "./Images"], function (require, exports, Images_1)
         }
         var column = Math.floor(process / 4);
         var row = process % 4;
-        console.log(process, row, column);
-        context.drawImage(Images_1.ImagesLoaded['CHEST'], row * 35, column * 35, 35, 35, x - size / 2, y - size / 2, size, size);
+        context.drawImage(Images_1.getLoadedImage('CHEST'), row * 35, column * 35, 35, 35, x - size / 2, y - size / 2, size, size);
     }
     exports.drawChestImage = drawChestImage;
 });

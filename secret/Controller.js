@@ -1,4 +1,4 @@
-define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require, exports, xyTuple_1, DrawingHelper_1) {
+define(["require", "exports", "./DrawingHelper", "./xyTuple"], function (require, exports, DrawingHelper_1, xyTuple_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Controller = /** @class */ (function () {

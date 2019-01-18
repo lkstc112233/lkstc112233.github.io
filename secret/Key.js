@@ -1,4 +1,4 @@
-define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require, exports, xyTuple_1, DrawingHelper_1) {
+define(["require", "exports", "./DrawingHelper", "./xyTuple"], function (require, exports, DrawingHelper_1, xyTuple_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Key = /** @class */ (function () {
@@ -7,6 +7,10 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             this.keyTaken = false;
             this.position = new xyTuple_1.Point();
         }
+        Key.prototype.reset = function () {
+            this.floatingFrame = 0;
+            this.keyTaken = false;
+        };
         Object.defineProperty(Key.prototype, "z", {
             get: function () {
                 return this.position.y;
@@ -39,7 +43,7 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             var radiusRate = 15 - Math.sin(this.floatingFrame) * 5;
             // Paint
             context.save();
-            context.globalAlpha = Math.sin(this.floatingFrame) * 0.3 + 0.4;
+            context.globalAlpha *= Math.sin(this.floatingFrame) * 0.3 + 0.4;
             context.beginPath();
             context.fillStyle = '#000';
             context.ellipse(this.position.x, this.position.y, radiusRate, radiusRate / 2, 0, 0, Math.PI * 2);

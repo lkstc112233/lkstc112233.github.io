@@ -1,4 +1,4 @@
-define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require, exports, xyTuple_1, DrawingHelper_1) {
+define(["require", "exports", "./DrawingHelper", "./xyTuple"], function (require, exports, DrawingHelper_1, xyTuple_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CHARACTER_SIZE = 40;
@@ -80,6 +80,14 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             this.position = new xyTuple_1.Point();
             this.velocity = new xyTuple_1.Point();
         }
+        Character.prototype.reset = function () {
+            this.velocity.zero();
+            this.frame = 0;
+            this.headSpin = 0;
+            this.headOffset = 0;
+            this.afterImageCooldown = 0;
+            this.m_taken = false;
+        };
         Object.defineProperty(Character.prototype, "z", {
             get: function () {
                 return this.position.y + 40;
@@ -129,7 +137,8 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
                 this.frame -= CHARACTER_WALKING_CONSTANT * 4;
             }
             // Update headOffset
-            this.headOffset = (this.velocity.length * 0.2 + 1) * (Math.sin(this.headSpin += Math.PI / 60) + 1);
+            this.headOffset = (this.velocity.length * 0.2 + 1) *
+                (Math.sin(this.headSpin += Math.PI / 60) + 1);
             drawCharacter(context, this.position.x, this.position.y, this.headOffset, WALKING_STEPS[Math.floor(this.frame / CHARACTER_WALKING_CONSTANT)], this.holding, this.velocity.direction);
         };
         return Character;

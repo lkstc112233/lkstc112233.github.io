@@ -1,4 +1,4 @@
-define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require, exports, xyTuple_1, DrawingHelper_1) {
+define(["require", "exports", "./DrawingHelper", "./xyTuple"], function (require, exports, DrawingHelper_1, xyTuple_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CHEST_SIZE = 40;
@@ -33,6 +33,9 @@ define(["require", "exports", "./xyTuple", "./DrawingHelper"], function (require
             this.opening = false;
             this.position = new xyTuple_1.Point();
         }
+        Chest.prototype.reset = function () {
+            this.opening = false;
+        };
         Object.defineProperty(Chest.prototype, "z", {
             get: function () {
                 return this.position.y;

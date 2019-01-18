@@ -8,6 +8,9 @@ define(["require", "exports"], function (require, exports) {
         Scene.prototype.add = function (sprite) {
             this.sprites.push(sprite);
         };
+        Scene.prototype.clear = function () {
+            this.sprites = [];
+        };
         Scene.prototype.update = function () {
             var _a;
             this.sprites = (_a = []).concat.apply(_a, (this.sprites.map(function (element) { return [element].concat(element.generate ? element.generate() : []); })));
