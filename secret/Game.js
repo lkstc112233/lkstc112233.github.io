@@ -19,12 +19,14 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
             this.width = 100;
             this.height = 100;
             this.timelimit = 600;
+            this.scale = 1;
             this.playerInitial = new xyTuple_1.Point();
             this.keyInitial = new xyTuple_1.Point();
             this.chestInitial = new xyTuple_1.Point();
+            this.obstacles = [];
         }
         Builder.prototype.build = function () {
-            var result = new Game(this.width, this.height, this.timelimit, this.playerInitial, this.keyInitial, this.chestInitial, new xyTuple_1.Point(this.left, this.top));
+            var result = new Game(this.width, this.height, this.scale, this.timelimit, this.playerInitial, this.keyInitial, this.chestInitial, this.obstacles, new xyTuple_1.Point(this.left, this.top));
             return result;
         };
         return Builder;
@@ -56,13 +58,15 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
     }());
     var RESET_PROCESS_LENGTH_HALF = 30;
     var Game = /** @class */ (function () {
-        function Game(width, height, timelimit, playerInitial, keyInitial, chestInitial, leftTopPoint) {
+        function Game(width, height, scale, timelimit, playerInitial, keyInitial, chestInitial, obstacles, leftTopPoint) {
             this.width = width;
             this.height = height;
+            this.scale = scale;
             this.timelimit = timelimit;
             this.playerInitial = playerInitial;
             this.keyInitial = keyInitial;
             this.chestInitial = chestInitial;
+            this.obstacles = obstacles;
             this.leftTopPoint = leftTopPoint;
             this.m_scene = new Scene_1.Scene();
             this.player = new Character_1.Character();
@@ -86,6 +90,7 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
             this.resetProcess = 0;
         };
         Game.prototype.reset = function () {
+            var _this = this;
             this.player.reset();
             this.player.position = this.playerInitial.clone();
             this.playerPositionRecord = [];
@@ -98,6 +103,11 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
             this.scene.add(this.player);
             this.scene.add(this.key);
             this.scene.add(this.chest);
+            this.obstacles.map(function (element) {
+                _this.scene.add(element);
+                element.width = _this.width;
+                element.height = _this.height;
+            });
             this.scene.add(new Boundry(this.width, this.height));
             this.scene.add(this.timeSlider);
             return this;
@@ -119,12 +129,14 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
         Game.prototype.touchBegin = function (point) {
             this.touching = point.clone();
             this.touching.minus(this.leftTopPoint);
+            this.touching.mul(1 / this.scale);
             this.controller.touchBegin(point);
         };
         Game.prototype.touchUpdate = function (point) {
             if (this.touching) {
                 this.touching = point.clone();
                 this.touching.minus(this.leftTopPoint);
+                this.touching.mul(1 / this.scale);
             }
             this.controller.touchUpdate(point);
         };
@@ -169,6 +181,9 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
             enumerable: true,
             configurable: true
         });
+        Game.prototype.idle = function () {
+            this.m_status = Status.IDLE;
+        };
         Game.prototype.rewind = function () {
             this.m_status = Status.REWIND_INITIATED;
         };
@@ -180,6 +195,7 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
             configurable: true
         });
         Game.prototype.update = function () {
+            var _this = this;
             switch (this.status) {
                 case Status.PLAYING: {
                     if (this.timeSlider.timeout) {
@@ -188,6 +204,7 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
                         this.scene.update();
                         return;
                     }
+                    this.timeSlider.update();
                     var accelerator = void 0;
                     if (this.useController) {
                         accelerator = this.controller.getControllerValue();
@@ -224,6 +241,16 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
                         this.player.velocity.y = 0;
                         this.player.position.y = this.height - 20;
                     }
+                    this.obstacles.map(function (element) {
+                        var dx = element.position.x - _this.player.position.x;
+                        var dy = element.position.y - _this.player.position.y - 20;
+                        var distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < element.radius) {
+                            var ratio = 1 - distance / element.radius;
+                            _this.player.position.x -= ratio * dx;
+                            _this.player.position.y -= ratio * dy;
+                        }
+                    });
                     if (this.playerKeyDistance < 20) {
                         this.key.taken();
                         this.player.taken();
@@ -275,6 +302,7 @@ define(["require", "exports", "./Character", "./Chest", "./Controller", "./Key",
                         RESET_PROCESS_LENGTH_HALF;
             }
             context.translate(this.leftTopPoint.x, this.leftTopPoint.y);
+            context.scale(this.scale, this.scale);
             this.scene.draw(context);
             context.restore();
             if (this.useController) {

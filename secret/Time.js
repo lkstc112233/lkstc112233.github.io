@@ -38,6 +38,14 @@ define(["require", "exports"], function (require, exports) {
             this.m_current = 0;
             this.m_stopped = false;
         };
+        TimeSlider.prototype.update = function () {
+            if (!this.stopped) {
+                this.m_current += 1;
+            }
+            if (this.timeout) {
+                this.stop();
+            }
+        };
         Object.defineProperty(TimeSlider.prototype, "z", {
             get: function () {
                 return 0;
@@ -46,11 +54,9 @@ define(["require", "exports"], function (require, exports) {
             configurable: true
         });
         TimeSlider.prototype.draw = function (context) {
-            if (!this.stopped) {
-                this.m_current += 1;
-            }
-            if (this.timeout) {
-                this.stop();
+            // Won't be drawn when stopped.
+            if (this.m_stopped) {
+                return;
             }
             var rate = this.current / this.timelimit;
             rate = Math.min(rate, 1);
